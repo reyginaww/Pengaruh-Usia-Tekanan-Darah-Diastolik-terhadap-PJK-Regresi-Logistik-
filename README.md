@@ -1,4 +1,4 @@
-# Pengaruh Usia & Tekanan Darah Diastolik terhadap PJK (Regresi Logistik)
+# Pengaruh Usia & Tekanan Darah Diastolik terhadap Penyakit Jantung Koroner (Regresi Logistik)
 
 ## Deskripsi
 Penelitian ini menganalisis pengaruh usia dan tekanan darah diastolik terhadap penyakit jantung koroner menggunakan regresi logistik.
