@@ -1,0 +1,616 @@
+---
+title: "Mengetahui Pengaruh Usia dan Tekanan Darah Diastolik terhadap Penyakit Jantung Koroner menggunakan Analisis Regresi Logistik"
+author: "Reygina Wahyunda Wulandari"
+date: "2024-06-04"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+    toc: true
+    number_sections: true
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r include=FALSE}
+library(knitr)
+opts_chunk$set(message = FALSE)
+opts_chunk$set(warning = FALSE)
+opts_chunk$set(comment = "")
+opts_chunk$set(collapse = TRUE)
+opts_chunk$set(error = TRUE)
+opts_chunk$set(prompt = TRUE)
+opts_chunk$set(fig.align = 'center')
+```
+
+Library:
+
+```{r}
+# install.packages("knitr")
+# install.packages("rmarkdown")
+# install.packages("prettydoc")
+# install.packages("equatiomatic")
+```
+
+# PENDAHULUAN
+
+## Latar Belakang
+
+Penyakit Jantung Koroner (PJK) atau bisa dikenal dengan Coronary Arteri
+Disease (CAD) merupakan kondisi ketika plak di arteri jantung mengalami
+penumpukan sehingga membuat suplai darah menuju jantung menjadi
+terganggu dan menyebabkan serangan jantung. Penyakit Jantung Koroner
+(PJK) merupakan suatu penyakit yang dapat terjadi saat arteri yang
+bertugas mensuplai darah untuk dinding jantung mengalami pengerasan dan
+penyempitan. Penyakit Jantung Koroner merupakan salah satu penyebab
+utama kematian di dunia setiap tahunnya, termasuk Indonesia. Menurut
+data yang ada di Organisasi Kesehatan Dunia (WHO) dalam Gumara (2021)
+menyatakan bahwa penyakit jantung adalah penyebab kematian terbesar
+manusia, setiap tahunya hampir 17 juta manusia yang meninggal dunia
+dikarenakan penyakit jantung sehingga kegiatan analisis ini akan menjadi
+penting untuk mengetahui faktor yang berpengaruh terhadap penyakit
+jantung koroner.
+
+Gejala dan tanda yang menjadi ciri khas dari penyakit jantung koroner
+adalah nyeri dada atau dada seperti tertindih selama lebih dari 20 menit
+saat berkegiatan disertai dengan keringat dingin, mual, pusing, dan
+lemah. Penyakit jantung koroner dapat menimbulkan gangguan fungsional
+bagi penderitanya yang dapat mempengaruhi fungsi fisik. Kapasitas
+fungsional yang semakin menurun dapat membuat penderita mengalami
+kesulitan dalam beraktivitas. Keluhan seperti nyeri dada, mual, pusing,
+dan lain-lain juga dapat mempengaruhi fungsi fisik sehingga penderita
+mengalami keterbatasan dalam berjalan, naik tangga atau melakukan
+kegiatan lainnya.
+
+Penyakit jantung koroner membuat penderita membutuhkan pengobatan yang
+rutin dan mengkonsumsi obat tepat waktu. Pelaksanaan terapi pada
+penderita PJK adalah dengan cara pengobatan farmakologis. Tindakan
+pengobatan dapat mencakup pemberian obat-obatan, intervensi kateter, dan
+bedah jantung. Selain dari pengobatan yang dilakukan, penderita harus
+menjalankan pola hidup yang sehat.
+
+Penelitian ini menggunakan data yang diambil dari kaggle pada tahun 2019
+untuk mengidentifikasikan pengaruh 2 faktor yaitu umur dan tekanan darah
+diastolik terhadap penyakit jantung koroner. Regresi logistik digunakan
+sebagai metode analisis karena skala variabel respon berupa data diskrit
+biner, yaitu "ya" untuk responden yang memiliki risiko terkena penyakit
+jantung koroner dan "tidak" untuk responden yang tidak memiliki risiko
+terkena penyakit jantung koroner. Hasil analisis ini diharapkan
+memberikan wawasan terhadap penyakit jantung sehingga kedepannya dapat
+melakukan tindakan pencegahan yang lebih baik.
+
+## Data
+
+Source:\<<https://www.kaggle.com/datasets/dileep070/heart-disease-prediction-using-logistic-regression/data>\>
+
+Berikut ini merupakan data yang digunakan dalam analisis regresi
+logistik.
+
+![](C:/Users/LENOVO/Pictures/Screenshots/Cuplikan%20layar%202024-06-04%20010702.png)Keterangan:
+
+X1 = Usia (tahun)
+
+X2 = Tekanan Darah Diastolik
+
+Y = Terkena Penyakit Jantung Koroner (1 jika "Ya" dan 0 jika "Tidak")
+
+## Tinjauan Pustaka
+
+### Analisis Regresi Logistik Biner
+
+Regresi logistik merupakan metode analisis statistika untuk
+mendeskripsikan hubungan antara variabel yang mempunyai dua kategori
+atau lebih dengan satu atau lebih peubah bebas yang bersakala kategori
+atau kontinu. Regresi logistik dapat dibagi menjadi regresi logistik
+biner, regresi logistik multinomial, dan regresi logistik ordinal.
+
+Analisis regresi logistik biner dapat digunakan untuk menganalisis
+hubungan antara variabel terikat yang berupa biner dan variabel bebas
+yang berupa numerik atau kategori. Secara umum, model regresi logistik
+biner dituliskan sebagai berikut (Hosmer dan Lemeshow, 1989).
+
+$$
+\pi(x)=\frac{exp(\beta_0+\beta_1x_1+\beta_2x_2+...+\beta_ix_i)}{1+exp(\beta_0+\beta_1x_1+\beta_2x_2+...+\beta_ix_i)}
+$$ $$ Keterangan : \\
+\pi(x) : Peluang \ Kejadian \ Sukses \\ 
+\beta : Koefisien \ Regresi $$
+
+Fungsi tersebut adalah fungsi non-linier sehingga diperlukan
+transformasi logit agar menjadi fungsi linier. Tujuannya adalah supaya
+fungsi dapat memodelkan hubungan variabel bebas dan variabel respon.
+Dengan transformasi logit, akan didapatkan model regresi logistik biner
+sebagai berikut.
+
+$$
+g(x)=ln( \frac{ \pi(x) }{ 1- \pi(x)})=\beta_0+\beta_1x_1+\beta_2x_2+...+\beta_ix_i
+$$\
+
+### Asumsi Non-Multikolinieritas
+
+Uji multikolinieritas merupakan sebuah teknik statistik yang digunakan
+untuk mengetahui adanya hubungan atau korelasi antar variabel bebas
+(independen) dalam model regresi. Multikolinieritas terjadi saat dua
+atau lebih variabel bebas saling berkorelasi satu sama lain sehingga
+informasi yang terkandung dalam variabel menjadi tumpang tindih.
+Multikolinearitas dapat dideteksi dengan menggunakan nilai variance
+inflation factor (VIF) dengan rumus sebagai berikut.
+
+$$VIF_j=\frac{1}{1-R^2_j},   j=1,2,...,k
+$$
+
+Dimana R square adalah nilai koefisien determinasi
+
+Selanjutnya, dari rumus tersebut akan diperoleh hasil nilai VIF yang
+dipakai untuk mengambil keputusan. Jika nilai VIF \> 10 maka ada gejala
+multikolinieritas, dan sebaliknya jika nilai VIF \< 10 maka tidak ada
+gejala multikolinieritas. Model regresi yang baik adalah model regresi
+yang di antara variabel bebasnya tidak terjadi hubungan atau korelasi
+yang tinggi.
+
+### Uji Hipotesis Simultan
+
+Pengujian simultan digunakan untuk memeriksa peranan variabel bebas
+terhadap variabel respon secara simultan (keseluruhan). Uji simultan
+dilakukan dengan *Likelihood Ratio Test*. Hipotesis dan statistik untuk
+uji ini adalah sebagai berikut.
+
+$$
+>Hipotesis \\
+H_0:\beta_0=\beta_1=\beta_2=...=\beta_i=0 \\
+H_1 : \beta_i \neq0 \ untuk \ i=1,2,...,k \\
+ \\
+>Statistik \ Uji \\
+G=-2 \ log(\frac{L_0} {L_p})
+$$ Keterangan : $$
+p:Banyaknya \ Variabel \ Bebas \ dalam \ Model \\
+L_0 :Nilai \ Likelihood \ tanpa \ Variabel \ Bebas \\
+L_1 :Nilai \ Likelihood \ dengan \ Variabel \ Bebas
+$$
+
+Dari nilai yang didapatkan dengan statistik uji tersebut dapat diambil
+keputusan yakni tolak $H_0$ jika nilai $𝐺^2 > 𝜒2(𝑑𝑏,𝛼)$ dengan derajat
+bebas (db) = k-1 atau jika *p-value* \< α yang berarti minimal terdapat
+1 variabel bebas yang berpengaruh secara signifikan terhadap variabel
+terikat.
+
+### Uji Hipotesis Parsial
+
+Pengujian parsial digunakan untuk mengetahui signifikansi pengaruh
+variabel bebas secara parsial terhadap variabel terikat. Hasil pengujian
+secara parsial akan menunjukkan apakah suatu variabel bebas layak untuk
+masuk dalam model atau tidak. Uji parsial dilakukan dengan menggunakan
+uji wald. Hipotesis dan statistik yang digunakan untuk setiap variabel
+adalah sebagai berikut.
+
+$$
+> Hipotesis\\
+H_0:\beta_i=0 \\
+H_1 : \beta_i \neq0 \\
+> Statistik \ Uji \\
+W=\frac{\beta_i^2}{SE(\beta_i^2)}
+$$ Keputusan yang diambil dalam uji ini dilihat dari *p-value* dimana
+variabel bebas dikatakan memberikan pengaruh terhadap variabel terikat
+secara parsial ketika *p-value* \< α.
+
+### Koefisien Determinasi
+
+Uji *Psoude R Square* digunakan untuk memperlihatkan adanya kekuatan
+hubungan variasi variabel dependen dengan penjelasan variabel
+independen. *Psoude R Square* dapat diketahui dari salah satu nilai Cox
+and Snell untuk mengukur nilai dengan nilai maksimum 1, Nagelkerke untuk
+memastikan nilainya berkisar antara 0 sampai 1, dan McFadden untuk
+mengetahui tingkat variabilitas (Ghozali, 2013).
+
+### Odds Ratio
+
+Secara umum, *odds ratio* merupakan sekumpulan peluang dibagi dengan
+peluang lainnya. *Odds* dari suatu kejadian dapat diartikan sebagai
+probabilitas hasil yang muncul dibagi dengan probabilitas suatu kejadian
+yang tidak terjadi. Persamaan dapat dituliskan sebagai berikut.
+
+$$
+Odds \ Ratio=\frac{Odds \ A} {Odds \ B}=\frac{\frac{\pi_A}{(1-\pi_A)}}{\frac{\pi_B}{(1-\pi_B)}}
+$$
+
+### Uji Ketetapan Klasifikasi
+
+Uji ketepatan klasifikasi digunakan untuk mengevaluasi seberapa baik
+model regresi logistik dapat mengklasifikasikan data ke dalam kategori
+yang benar berdasarkan prediksi yang dihasilkan oleh model. Uji
+ketepatan klasifikasi dapat menggunakan *Apparent Error Rate* (APER).
+APER merupakan fraksi observasi dalam sampel yang salah diklasifikasikan
+atau *misclassified* pada fungsi klasifikasi.
+
+### Uji Kelayakan Model
+
+Metode yang digunakan untuk menguji kelayakan *(goodness-of-fit)* antara
+model regresi logistik yang telah dibangun dengan data yang diamati pada
+regresi logistik adalah uji Hosmer-Lemeshow. Uji ini bertujuan untuk
+mengevaluasi seberapa baik model regresi logistik dapat memprediksi
+hasil observasi dengan membandingkan antara nilai yang diprediksi oleh
+model dengan nilai yang diamati.
+
+## Tujuan
+
+1.  Mengetahui pengaruh usia dan tekanan darah diastolik terhadap
+    penyakit jantung koroner
+2.  Untuk mengetahui langkah-langkah analisis regresi logistik
+    menggunakan Rstudio
+
+# SOURCE CODE
+
+## Library
+
+Library yang digunakan untuk analisis regresik logistik menggunakan
+Rstudio antara lain sebagai berikut.
+
+```{r}
+# Library
+library(knitr) 
+library(readr)
+library(generalhoslem)
+library(pscl)
+```
+
+-   *library* `knitr` digunakan untuk mengubah dokumen yang berisi
+    format lain sepertu HTML, PDF, dan Word.
+-   *library* `readr` digunakan untuk mengimport data dari tabular file
+    (csv, text file, dll).
+-   *library* `generalhoslem` digunakan untuk melakukan pengujian
+    kelayakan model pada regresi logistik.
+-   *library* `pscl` digunakan untuk menilai kekuatan prediksi dari
+    model regresi logistik.
+
+## Impor Data
+
+```{r}
+#Impor Data
+datareglog <-read.csv("C:/Users/LENOVO/Documents/kaggle/framingham.csv")
+Y <- as.factor(datareglog$TenYearCHD)
+X1 <- datareglog$age
+X2 <- datareglog$diaBP
+
+#Membuat Data Frame
+data_jantung<-data.frame(X1,X2,Y)
+str(data_jantung)
+```
+
+-   *Function* `read.csv` digunakan untuk membaca file CSV
+    (*Comma-Separated Values*) dan memuat isinya ke dalam sebuah *data
+    frame* di R.
+
+-   *Function* `as.factor` digunakan untuk mengonversi objek menjadi
+    faktor.
+
+-   *Function* `data.frame` digunakan untuk membuat *data frame*, di
+    mana satu kolom harus memiliki tipe kelas yang sama.
+
+-   *Function* `str` digunakan untuk menampilkan struktur dari sebuah
+    objek R.
+
+## Plot
+
+Pie Chart
+
+```{r}
+YES<-sum(data_jantung$Y == 1)
+NO<-sum(data_jantung$Y == 0)
+slices<-c(YES,NO)
+lbls<-c("Terkena","Tidak Terkena")
+lbls<-paste(lbls,slices)
+lbls<-paste(lbls)
+pie(slices, labels=lbls, col=rainbow(length(lbls)),main = "Pie Chart of Heart Disease")
+```
+
+## Asumsi Non-Multikolinieritas
+
+```{r}
+reglog_x1<-lm(X1~X2, data=data_jantung)
+vif_x1<-1/(1-summary(reglog_x1)$r.squared)
+reglog_x2<-lm(X2~X1, data=data_jantung)
+vif_x2<-1/(1-summary(reglog_x2)$r.squared)
+nilai_VIF<-data.frame(vif_x1,vif_x2)
+nilai_VIF
+
+```
+
+-   *Function* `lm` digunakan untuk melakukan analisis regresi linier.
+
+## Pemodelan Regresi Logistik
+
+```{r}
+reglog<-glm(Y~X1+X2, family="binomial", data=data_jantung)
+summary(reglog)
+
+```
+
+-   *Function* `glm` digunakan untuk melakukan analisis regresi dengan
+    model linier umum, termasuk regresi logistik dan regresi poisson.
+
+## Uji Simultan
+
+```{r}
+uji_simultan<-pR2(reglog)
+uji_simultan
+
+qchisq(0.95, 1)
+```
+
+-   *Function* `pR2` digunakan untuk menghitung nilai *pseudo R-squared*
+    model yang dihasilkan oleh *function* `glm`.
+
+## Uji Parsial
+
+```{r}
+uji_parsial <- summary(reglog)
+uji_parsial
+```
+
+-   *Function* `summary` digunakan untuk memberikan ringkasan statistik
+    dari berbagai objek, termasuk *data frame*, vektor, dan lain-lain.
+
+## Koefisien Determinasi
+
+```{r}
+Rsq<-1-(3351.2/3611.5)
+Rsq
+```
+
+## Odds Ratio
+
+```{r}
+beta<-(coef(reglog))
+OR_beta<-exp(beta)
+cbind(beta,OR_beta)
+```
+
+-   *Function* `coef` secara umum digunakan untuk mengambil estimasi
+    parameter dari model regresi logistik.
+
+-   *Function* `exp` digunakan untuk menghitung eksponensial dari suatu
+    nilai atau vektor nilai.
+
+-   *Function* `cbind` digunakan untuk menggabungkan objek berdasarkan
+    kolom.
+
+## Uji Ketepatan Klasifikasi
+
+```{r}
+yp_hat<-fitted(reglog)
+data_jantung$yp_hat<-yp_hat
+data_jantung
+class<-table(data_jantung$Y,data_jantung$yp_hat>0.5)
+class
+(3590+5)/(3590+4+639+5)
+```
+
+-   *Function* `fitted` digunakan untuk mendapatkan nilai yang
+    diprediksi dari model regresi logistik. Argumen yang diisikan dalam
+    *function* adalah `(reglog)` untuk menampilkan data yang digunakan
+    pada *function* ini.
+
+-   *Function* `table` digunakan untuk mengubah *long-odds* ke *odds* .
+
+## Uji Kelayakan Model
+
+```{r}
+logitgof(data_jantung$Y,fitted(reglog))
+```
+
+-   *Function* `logitgof` digunakan untuk memeriksa *goodness-of-fit*
+    dari model pertumbuhan logistik terhadap data.
+
+# HASIL DAN PEMBAHASAN
+
+## Asumsi Non-Multikolinieritas
+
+```{r}
+reglog_x1<-lm(X1~X2, data=data_jantung)
+vif_x1<-1/(1-summary(reglog_x1)$r.squared)
+reglog_x2<-lm(X2~X1, data=data_jantung)
+vif_x2<-1/(1-summary(reglog_x2)$r.squared)
+nilai_VIF<-data.frame(vif_x1,vif_x2)
+nilai_VIF
+
+```
+
+VIF atau *Variance Inflation Factors* dilakukan ditiap variabel bebas.
+Dari perhitungan di atas, nilai VIF pada masing-masing variabel bebas
+menghasilkan nilai kurang dari 10 yang berarti bahwa tidak terjadi
+multikolinieritas antar variabel bebas sehingga data ini dapat digunakan
+dan analisis bisa dilanjutkan.
+
+## Pemodelan Regresi Logistik
+
+```{r}
+reglog<-glm(Y~X1+X2, family="binomial", data=data_jantung)
+summary(reglog)
+
+```
+
+Diperoleh model regresi logistik sebagai berikut:
+$$g(x)= -7,312019 + 0,069551 X1 + 0,023815 X2$$\
+Interpretasi tiap parameter :
+
+-   -7,312019 ( $\beta_0$ ), berarti ketika X1 dan X2 bernilai 0
+    (konstan) maka rata-rata risiko terkena penyakit jantung koroner
+    adalah sebesar -7,312019 atau tidak akan terjadi.
+
+-   0,069551 ( $\beta_1$ ), berarti ketika usia naik 1 satuan dan
+    variabel lain bernilai konstan maka rata-rata risiko terkena
+    penyakit jantung koroner adalah sebesar 0,069551.
+
+-   0,023815 ($\beta_2$ ), berarti ketika tekanan darah diastolik naik 1
+    satuan dan variabel lain bernilai konstan maka rata-rata risiko
+    terkena penyakit jantung koroner adalah sebesar 0,023815.
+
+## Uji Simultan
+
+**Hipotesis:**
+
+$H_0$: variabel bebas tidak berpengaruh terhadap variabel respon
+
+$H_1$: minimal terdapat 1 variabel bebas yang berpengaruh secara
+signifikan terhadap variabel respon.
+
+**Kriteria Uji:** $H_0$ ditolak apabila $G^2 > X^2$
+
+**Statistik Uji:**
+
+```{r}
+uji_simultan<-pR2(reglog)
+uji_simultan
+
+qchisq(0.95, 1)
+```
+
+**Keputusan:** $G^2 (19,2350) > X^2 (3,8414)$, maka $H_0$ ditolak
+
+**Kesimpulan:** Dengan taraf nyata 5% dapat disimpulkan bahwa minimal
+terdapat 1 variabel bebas yang berpengaruh secara signifikan terhadap
+variabel respon.
+
+## Uji Parsial
+
+```{r}
+uji_parsial <- summary(reglog)
+uji_parsial
+```
+
+1.  Usia $(X1)$
+
+    **Hipotesis:**
+
+    $H_0:$ usia tidak berpengaruh terhadap penyakit jantung koroner
+
+    $H_1:$ usia berpengaruh terhadap penyakit jantung koroner
+
+    **Kriteria Uji:** $H_0$ ditolak apabila $p−value <α(0,05)$
+
+    **Keputusan**: $p-value (0,000) < \alpha (0,05)$ , maka $H_0$
+    ditolak
+
+    **Kesimpulan**: Dengan taraf nyata 5% dapat disimpulkan bahwa usia
+    berpengaruh terhadap penyakit jantung koroner.
+
+2.  Tekanan darah diastolik $(X2)$
+
+    **Hipotesis:**
+
+    $H_0:$ tekanan darah diastolik tidak berpengaruh terhadap penyakit
+    jantung koroner
+
+    $H_1:$ tekanan darah diastolik berpengaruh terhadap penyakit jantung
+    koroner
+
+    **Kriteria Uji:** $H_0$ ditolak apabila $p−value <α(0,05)$
+
+    **Keputusan**: $p-value (0,000) < \alpha (0,05)$ , maka $H_0$
+    ditolak
+
+    **Kesimpulan**: Dengan taraf nyata 5% dapat disimpulkan bahwa
+    tekanan darah diastolik berpengaruh terhadap penyakit jantung
+    koroner.
+
+## Koefisien Determinasi
+
+```{r}
+Rsq<-1-(3351.2/3611.5)
+Rsq
+```
+
+Didapatkan nilai R square sebesar 7,2% sehingga dapat disimpulkan bahwa
+variabel bebas yang dianalisis yakni usia dan tekanan darah diastolik
+mampu menjelaskan variasi variabel (risiko penyakit jantung koroner)
+sebesar 7,2% , sedangkan 92,8% lainnya dijelaskan oleh variabel lain di
+luar model.
+
+## Odds Ratio
+
+```{r}
+beta<-(coef(reglog))
+OR_beta<-exp(beta)
+cbind(beta,OR_beta)
+```
+
+1.  Usia $(X1)$
+
+    Kecenderungan seseorang dengan usia lebih tinggi satu tahun untuk
+    memiliki risiko terkena penyakit jantung koroner adalah 1,072 kali
+    lebih tinggi dibandingkan seseorang dengan usia yang lebih rendah
+    satu tahun.
+
+2.  Tekanan darah diastolik $(X2)$
+
+    Kecenderungan seseorang dengan tekanan darah diastolik lebih tinggi
+    satu satuan untuk memiliki risiko terkena penyakit jantung koroner
+    adalah 1,024 kali lebih tinggi dibandingkan dengan seseorang yang
+    memiliki tekanan darah diastolik lebih rendah satu satuan.
+
+## Uji Ketepatan Klasifikasi
+
+```{r}
+yp_hat<-fitted(reglog)
+data_jantung$yp_hat<-yp_hat
+data_jantung
+class<-table(data_jantung$Y,data_jantung$yp_hat>0.5)
+class
+(3590+5)/(3590+4+639+5)
+```
+
+Berdasarkan pembentukan tabel ketetapan klasifikasi yang merupakan tabel
+frekuensi dua arah antara variabel respon dan bebas, maka diperoleh
+tingkat akurasi model sebesar 84,82%.
+
+## Uji Kelayakan Model
+
+```{r}
+logitgof(data_jantung$Y,fitted(reglog))
+```
+
+**Hipotesis:**
+
+$H_0$ : Model layak digunakan untuk peramalan
+
+$H_1$ : Model tidak layak digunakan untuk peramalan
+
+**Kriteria Uji:** $H_0$ ditolak apabila $p−value <α(0,05)$
+
+**Keputusan:** $p-value (0,3064) > \alpha (0,05)$ , maka $H_0$ diterima.
+
+**Kesimpulan:** Dengan taraf nyata 5% dapat disimpulkan bahwa model
+layak digunakan untuk peramalan.
+
+# KESIMPULAN
+
+-   Kesimpulannya adalah sebelum dan setelah pemodelan harus dilakukan
+    beberapa asumsi dan uji untuk memastikan bahwa variabel bebas
+    benar-benar memberikan pengaruh signifikan terhadap variabel respon
+    dan untuk memastikan bahwa model yang dibentuk sudah sesuai.
+-   Dengan uji simultan dapat diketahui bahwa minimal terdapat 1
+    variabel bebas yang berpengaruh secara signifikan terhadap variabel
+    respon.
+-   Dengan uji parsial dapat diketahui bahwa usia dan tekanan darah
+    diastolik berpengaruh secara signifikan terhadap penyakit jantung
+    koroner.
+
+# SARAN
+
+Setelah diketahui bahwa usia dan tekanan darah diastolik berpengaruh
+secara signifikan terhadap penyakit jantung koroner maka seseorang harus
+bisa menjalankan pola hidup yang sehat seperti rajin berolahraga, makan
+teratur, dan lain-lain agar terhindar dari risiko terkena penyakit
+jantung koroner.
+
+# DAFTAR PUSTAKA
+
+Ghozali, I. (2013). *Aplikasi Analisis Multivariate Dengan Program IBM
+SPSS 21 : Update PLS Regresi.* Semarang: Universitas Diponegoro
+
+GUMARA, J., Zayanti, D. A., & Kresnawati, E. S. (2021). *PENERAPAN
+METODE REGRESI LOGISTIK BINER UNTUK MENGKLASIFIKASI RISIKO PENYAKIT
+JANTUNG* (Doctoral dissertation, Sriwijaya University).
+
+Hosmer Jr, D. W., Lemeshow, S., & Sturdivant, R. X. (2013). *Applied
+logistic regression.* John Wiley & Sons.
